@@ -25,7 +25,7 @@ Route::get('/tipos-sangre', function () {
     return TipoSangre::orderBy('id')->get();
 });
 
-// ---------- Módulo 1: Autenticación y usuarios (Integrante A) ----------
+// ---------- Módulo 1: Autenticación y usuarios (Mayerli) ----------
 // Route::post('/registro', ...);
 // Route::post('/login', ...);
 
@@ -38,9 +38,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Route::post('/logout', ...);
 
-    // ---------- Módulo 2: Donantes (Integrante B) ----------
+    // ---------- Módulo 2: Donantes (Maya) ----------
 
-    // ---------- Módulo 3: Hospitales y solicitudes (Integrante C) ----------
+    // ---------- Módulo 3: Hospitales y solicitudes (Mati) ----------
 
-    // ---------- Módulo 4: Citas, donaciones y campañas (Integrante D) ----------
+    // ---------- Módulo 4: Citas, donaciones y campañas (Mollo) ----------
 });

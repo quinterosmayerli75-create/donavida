@@ -2,11 +2,9 @@
 
 Los 4 integrantes trabajan en **backend y frontend**. Cada uno es dueño de un módulo completo: hace su API en Laravel y luego las pantallas en React que la consumen.
 
-> Reemplacen "Integrante A, B, C, D" por sus nombres.
-
 ## Integrantes y módulos
 
-### 👤 Integrante A — Autenticación, usuarios y notificaciones
+### 👤 Mayerli — Autenticación, usuarios y notificaciones
 **Tablas:** `usuarios`, `roles`, `notificaciones`
 
 Backend:
@@ -24,7 +22,7 @@ Frontend:
 - [ ] Layout general con menú según el rol
 - [ ] Campanita de notificaciones con Laravel Echo
 
-### 👤 Integrante B — Donantes
+### 👤 Maya — Donantes
 **Tablas:** `donantes`, `tipos_sangre`
 
 Backend:
@@ -38,7 +36,7 @@ Frontend:
 - [ ] Portal del donante: perfil, mapa (Leaflet) para marcar su ubicación
 - [ ] Historial de donaciones e insignias ("Héroe nivel X")
 
-### 👤 Integrante C — Hospitales, solicitudes y emparejamiento
+### 👤 Mati — Hospitales, solicitudes y emparejamiento
 **Tablas:** `hospitales`, `solicitudes`
 
 Backend:
@@ -52,7 +50,7 @@ Frontend:
 - [ ] Mapa con el hospital y los donantes compatibles cercanos
 - [ ] Botón "Abrir WhatsApp" del hospital (link `wa.me`)
 
-### 👤 Integrante D — Citas, donaciones, campañas y reportes
+### 👤 Mollo — Citas, donaciones, campañas y reportes
 **Tablas:** `citas`, `donaciones`, `campanas`
 
 Backend:

@@ -15,10 +15,10 @@ src/
 ├── api/cliente.ts        # Axios configurado con la URL de la API y el token
 ├── componentes/          # Botones, tarjetas, menú... compartidos por todos
 ├── modulos/
-│   ├── autenticacion/    # Integrante A
-│   ├── donantes/         # Integrante B
-│   ├── hospitales/       # Integrante C
-│   └── citas/            # Integrante D
+│   ├── autenticacion/    # Mayerli
+│   ├── donantes/         # Maya
+│   ├── hospitales/       # Mati
+│   └── citas/            # Mollo
 ├── paginas/Inicio.tsx    # Página de prueba de conexión con la API
 ├── App.tsx               # Rutas
 └── main.tsx
