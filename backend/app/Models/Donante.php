@@ -65,21 +65,89 @@ class Donante extends Model
     }
 
     /**
+     * Fecha desde la que el donante puede volver a donar (última donación + 3 meses).
+     * Devuelve null si nunca donó (puede donar ya).
+     *
+     * Se usa addMonthsNoOverflow: si donó el 30 de noviembre, puede volver el 28 de febrero
+     * (y no el 2 de marzo, que es lo que pasaría si el mes "se desbordara").
+     */
+    public function proximaFechaParaDonar(): ?Carbon
+    {
+        if ($this->fecha_ultima_donacion === null) {
+            return null;
+        }
+
+        return $this->fecha_ultima_donacion->copy()->addMonthsNoOverflow(self::MESES_ENTRE_DONACIONES);
+    }
+
+    /**
      * Regla clave: puede donar si nunca donó o si ya pasaron 3 meses desde la última donación.
      */
     public function puedeDonarHoy(): bool
     {
-        if ($this->fecha_ultima_donacion === null) {
+        $fechaPermitida = $this->proximaFechaParaDonar();
+
+        if ($fechaPermitida === null) {
             return true;
         }
 
-        $fechaPermitida = $this->fecha_ultima_donacion->copy()->addMonths(self::MESES_ENTRE_DONACIONES);
-
         return Carbon::today()->greaterThanOrEqualTo($fechaPermitida);
+    }
+
+    /** Días que le faltan para poder donar (0 si ya puede). */
+    public function diasParaPoderDonar(): int
+    {
+        if ($this->puedeDonarHoy()) {
+            return 0;
+        }
+
+        return (int) Carbon::today()->diffInDays($this->proximaFechaParaDonar());
     }
 
     public function edad(): int
     {
         return (int) $this->fecha_nacimiento->diffInYears(Carbon::today());
+    }
+
+    /**
+     * Niveles de insignia según la cantidad de donaciones válidas.
+     * Cada fila: [donaciones mínimas, nivel, nombre].
+     */
+    public const NIVELES_INSIGNIA = [
+        [1, 1, 'Primera gota'],
+        [3, 2, 'Corazón solidario'],
+        [5, 3, 'Salvavidas'],
+        [10, 4, 'Leyenda DonaVida'],
+    ];
+
+    /**
+     * Calcula la insignia "Héroe nivel X" a partir del número de donaciones válidas.
+     * También indica cuántas donaciones faltan para el siguiente nivel.
+     *
+     * @return array{nivel: int, titulo: string, nombre: string|null, donaciones_validas: int, siguiente_nivel_en: int|null}
+     */
+    public static function calcularInsignia(int $donacionesValidas): array
+    {
+        $nivel = 0;
+        $nombre = null;
+        $siguienteNivelEn = null;
+
+        foreach (self::NIVELES_INSIGNIA as [$minimo, $numeroNivel, $nombreNivel]) {
+            if ($donacionesValidas >= $minimo) {
+                $nivel = $numeroNivel;
+                $nombre = $nombreNivel;
+            } else {
+                $siguienteNivelEn = $minimo - $donacionesValidas;
+                break;
+            }
+        }
+
+        return [
+            'nivel' => $nivel,
+            'titulo' => $nivel === 0 ? 'Aún sin insignia' : 'Héroe nivel ' . $nivel,
+            'nombre' => $nombre,
+            'donaciones_validas' => $donacionesValidas,
+            'siguiente_nivel_en' => $siguienteNivelEn,
+        ];
     }
 }
