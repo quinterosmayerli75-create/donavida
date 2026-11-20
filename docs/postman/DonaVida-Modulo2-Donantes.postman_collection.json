@@ -1,0 +1,533 @@
+{
+    "info": {
+        "name": "DonaVida API - Módulo 2 (Donantes)",
+        "description": "Rutas del módulo de Maya. Ejecuta primero un Login (el token se guarda solo). Todas las rutas requieren rol donante.",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "variable": [
+        {
+            "key": "base_url",
+            "value": "http://localhost:8000/api"
+        },
+        {
+            "key": "token",
+            "value": ""
+        }
+    ],
+    "item": [
+        {
+            "name": "0. Iniciar sesión (elige uno)",
+            "item": [
+                {
+                    "name": "Login como ana",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/login",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "login"
+                            ]
+                        },
+                        "description": "O-, nunca donó: puede donar, sin insignia.",
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"email\": \"ana@donavida.test\",\n    \"password\": \"password123\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "// Guarda el token automáticamente para las demás peticiones",
+                                    "const respuesta = pm.response.json();",
+                                    "if (respuesta.token) { pm.collectionVariables.set('token', respuesta.token); }"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Login como luis",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/login",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "login"
+                            ]
+                        },
+                        "description": "O+, donó hace 1 mes: NO puede donar. Héroe nivel 1.",
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"email\": \"luis@donavida.test\",\n    \"password\": \"password123\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "// Guarda el token automáticamente para las demás peticiones",
+                                    "const respuesta = pm.response.json();",
+                                    "if (respuesta.token) { pm.collectionVariables.set('token', respuesta.token); }"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Login como sofia",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/login",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "login"
+                            ]
+                        },
+                        "description": "A+, 3 donaciones, la última hace 4 meses: puede donar. Héroe nivel 2.",
+                        "auth": {
+                            "type": "noauth"
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"email\": \"sofia@donavida.test\",\n    \"password\": \"password123\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    },
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "type": "text/javascript",
+                                "exec": [
+                                    "// Guarda el token automáticamente para las demás peticiones",
+                                    "const respuesta = pm.response.json();",
+                                    "if (respuesta.token) { pm.collectionVariables.set('token', respuesta.token); }"
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "1. Perfil",
+            "item": [
+                {
+                    "name": "Ver mi perfil",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/donante/perfil",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "donante",
+                                "perfil"
+                            ]
+                        },
+                        "description": "Datos del donante, tipo de sangre, edad y si puede donar hoy.",
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Editar perfil (ubicación y disponibilidad)",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/donante/perfil",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "donante",
+                                "perfil"
+                            ]
+                        },
+                        "description": "Solo se cambian los campos enviados. Latitud y longitud van juntas.",
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"zona\": \"Cala Cala\",\n    \"direccion\": \"Av. Libertador (prueba)\",\n    \"latitud\": -17.3755,\n    \"longitud\": -66.159,\n    \"disponible\": true\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Editar perfil (tipo de sangre y peso)",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/donante/perfil",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "donante",
+                                "perfil"
+                            ]
+                        },
+                        "description": "Cambia el tipo de sangre (id del catálogo /tipos-sangre) y el peso.",
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"tipo_sangre_id\": 4,\n    \"peso_kg\": 62.5\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Error: menor de 18 años (422)",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/donante/perfil",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "donante",
+                                "perfil"
+                            ]
+                        },
+                        "description": "Debe responder 422 con el mensaje de edad mínima.",
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"fecha_nacimiento\": \"2015-01-01\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Error: mayor de 60 años (422)",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/donante/perfil",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "donante",
+                                "perfil"
+                            ]
+                        },
+                        "description": "Debe responder 422 con el mensaje de edad máxima.",
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"fecha_nacimiento\": \"1950-01-01\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Error: latitud sin longitud (422)",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/donante/perfil",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "donante",
+                                "perfil"
+                            ]
+                        },
+                        "description": "La ubicación debe enviarse completa.",
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"latitud\": -17.39\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "2. ¿Puedo donar?",
+            "item": [
+                {
+                    "name": "¿Puedo donar hoy?",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/donante/puedo-donar",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "donante",
+                                "puedo-donar"
+                            ]
+                        },
+                        "description": "Regla de los 3 meses. Prueba con ana (sí), luis (no) y sofia (sí).",
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "3. Historial",
+            "item": [
+                {
+                    "name": "Historial e insignia",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/donante/historial",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "donante",
+                                "historial"
+                            ]
+                        },
+                        "description": "Donaciones (la más reciente primero), totales e insignia \"Héroe nivel X\".",
+                        "auth": {
+                            "type": "bearer",
+                            "bearer": [
+                                {
+                                    "key": "token",
+                                    "value": "{{token}}",
+                                    "type": "string"
+                                }
+                            ]
+                        }
+                    }
+                }
+            ]
+        }
+    ]
+}

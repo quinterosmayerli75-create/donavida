@@ -26,15 +26,15 @@ Frontend:
 **Tablas:** `donantes`, `tipos_sangre`
 
 Backend:
-- [ ] Ver y editar el perfil del donante (tipo de sangre, ubicación, disponibilidad)
-- [ ] Validar edad de 18 a 60 años al registrar
-- [ ] Historial de donaciones del donante
-- [ ] Endpoint "¿puedo donar?" usando `Donante::puedeDonarHoy()` (regla de los 3 meses)
-- [ ] Pruebas automáticas de la regla de los 3 meses
+- [x] Ver y editar el perfil del donante (tipo de sangre, ubicación, disponibilidad)
+- [x] Validar edad de 18 a 60 años al registrar
+- [x] Historial de donaciones del donante
+- [x] Endpoint "¿puedo donar?" usando `Donante::puedeDonarHoy()` (regla de los 3 meses)
+- [x] Pruebas automáticas de la regla de los 3 meses
 
 Frontend:
-- [ ] Portal del donante: perfil, mapa (Leaflet) para marcar su ubicación
-- [ ] Historial de donaciones e insignias ("Héroe nivel X")
+- [x] Portal del donante: perfil, mapa (Leaflet) para marcar su ubicación
+- [x] Historial de donaciones e insignias ("Héroe nivel X")
 
 ### 👤 Mati — Hospitales, solicitudes y emparejamiento
 **Tablas:** `hospitales`, `solicitudes`

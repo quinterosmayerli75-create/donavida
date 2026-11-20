@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AdministradorHospitalController;
 use App\Http\Controllers\Api\AutenticacionController;
+use App\Http\Controllers\Api\DonanteController;
 use App\Http\Controllers\Api\NotificacionController;
 use App\Models\Rol;
 use App\Models\TipoSangre;
@@ -55,7 +56,12 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     // ---------- Módulo 2: Donantes (Maya) ----------
-    // Route::middleware('rol:' . Rol::DONANTE)->group(function () { ... });
+    Route::middleware('rol:' . Rol::DONANTE)->prefix('donante')->group(function () {
+        Route::get('/perfil', [DonanteController::class, 'verPerfil']);
+        Route::put('/perfil', [DonanteController::class, 'actualizarPerfil']);
+        Route::get('/puedo-donar', [DonanteController::class, 'puedoDonar']);
+        Route::get('/historial', [DonanteController::class, 'historial']);
+    });
 
     // ---------- Módulo 3: Hospitales y solicitudes (Mati) ----------
     // Route::middleware('rol:' . Rol::HOSPITAL)->group(function () { ... });
