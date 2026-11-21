@@ -40,7 +40,7 @@ Frontend:
 **Tablas:** `hospitales`, `solicitudes`
 
 Backend:
-- [ ] Perfil del hospital (editar datos, ubicación, WhatsApp)
+- [x] Perfil del hospital (editar datos, ubicación, WhatsApp)
 - [ ] CRUD de solicitudes urgentes (cancelar = cambiar `estado`, no borrar)
 - [ ] **Emparejamiento:** buscar donantes con tipo compatible (`puede_recibir_de`), disponibles, que puedan donar hoy, ordenados por distancia (fórmula de Haversine)
 - [ ] Al publicar una solicitud, crear una notificación para cada donante compatible (usa el modelo de A)

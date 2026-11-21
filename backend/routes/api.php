@@ -3,7 +3,9 @@
 use App\Http\Controllers\Api\AdministradorHospitalController;
 use App\Http\Controllers\Api\AutenticacionController;
 use App\Http\Controllers\Api\DonanteController;
+use App\Http\Controllers\Api\HospitalController;
 use App\Http\Controllers\Api\NotificacionController;
+use App\Http\Middleware\VerificarHospitalActivo;
 use App\Models\Rol;
 use App\Models\TipoSangre;
 use Illuminate\Support\Facades\Route;
@@ -64,7 +66,10 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     // ---------- Módulo 3: Hospitales y solicitudes (Mati) ----------
-    // Route::middleware('rol:' . Rol::HOSPITAL)->group(function () { ... });
+    Route::middleware(['rol:' . Rol::HOSPITAL, VerificarHospitalActivo::class])->prefix('hospital')->group(function () {
+        Route::get('/perfil', [HospitalController::class, 'show']);
+        Route::put('/perfil', [HospitalController::class, 'update']);
+    });
 
     // ---------- Módulo 4: Citas, donaciones y campañas (Mollo) ----------
 });
