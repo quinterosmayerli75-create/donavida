@@ -8,6 +8,12 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Solicitud extends Model
 {
+    public const ABIERTA = 'abierta';
+
+    public const CUBIERTA = 'cubierta';
+
+    public const CANCELADA = 'cancelada';
+
     protected $table = 'solicitudes';
 
     protected $fillable = [
@@ -24,6 +30,9 @@ class Solicitud extends Model
     protected function casts(): array
     {
         return [
+            'tipo_sangre_id' => 'integer',
+            'unidades_requeridas' => 'integer',
+            'unidades_confirmadas' => 'integer',
             'fecha_limite' => 'datetime',
         ];
     }

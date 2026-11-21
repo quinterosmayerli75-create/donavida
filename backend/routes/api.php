@@ -3,7 +3,10 @@
 use App\Http\Controllers\Api\AdministradorHospitalController;
 use App\Http\Controllers\Api\AutenticacionController;
 use App\Http\Controllers\Api\DonanteController;
+use App\Http\Controllers\Api\HospitalController;
 use App\Http\Controllers\Api\NotificacionController;
+use App\Http\Controllers\Api\SolicitudController;
+use App\Http\Middleware\VerificarHospitalActivo;
 use App\Models\Rol;
 use App\Models\TipoSangre;
 use Illuminate\Support\Facades\Route;
@@ -64,7 +67,18 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     // ---------- Módulo 3: Hospitales y solicitudes (Mati) ----------
-    // Route::middleware('rol:' . Rol::HOSPITAL)->group(function () { ... });
+    Route::middleware(['rol:' . Rol::HOSPITAL, VerificarHospitalActivo::class])
+        ->prefix('hospital')
+        ->name('hospital.')
+        ->where(['solicitud' => '[0-9]+'])
+        ->group(function () {
+            Route::get('/perfil', [HospitalController::class, 'show']);
+            Route::put('/perfil', [HospitalController::class, 'update']);
+            Route::get('/solicitudes/{solicitud}/donantes-compatibles', [SolicitudController::class, 'donantesCompatibles'])
+                ->name('solicitudes.donantes-compatibles');
+            Route::apiResource('solicitudes', SolicitudController::class)
+                ->parameters(['solicitudes' => 'solicitud']);
+        });
 
     // ---------- Módulo 4: Citas, donaciones y campañas (Mollo) ----------
 });
