@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Donante;
 use App\Models\Solicitud;
 use App\Services\EmparejamientoDonantes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -26,9 +27,26 @@ class SolicitudController extends Controller
     public function store(Request $request): JsonResponse
     {
         $datos = $this->validarDatos($request, creando: true);
-        $solicitud = $this->solicitudesDelHospital($request)->create($datos)->refresh()->load('tipoSangre');
+        $hospital = $request->user()->hospital;
 
-        return response()->json(['solicitud' => $solicitud], 201);
+        $publicacion = DB::transaction(function () use ($hospital, $datos) {
+            $solicitud = $hospital->solicitudes()->create($datos)->refresh()->load('tipoSangre');
+            $donantes = $this->emparejamiento->elegibles($solicitud->tipoSangre);
+
+            $notificaciones = $solicitud->notificaciones()->createMany($donantes->map(fn (Donante $donante) => [
+                'usuario_id' => $donante->usuario_id,
+                'tipo' => 'solicitud_urgente',
+                'titulo' => 'Solicitud urgente de donación',
+                'mensaje' => "{$hospital->razon_social} publicó una solicitud de donación. Consulta sus detalles en DonaVida.",
+            ])->all());
+
+            return [
+                'solicitud' => $solicitud,
+                'notificaciones_creadas' => $notificaciones->count(),
+            ];
+        });
+
+        return response()->json($publicacion, 201);
     }
 
     public function show(Request $request, string $solicitud): JsonResponse

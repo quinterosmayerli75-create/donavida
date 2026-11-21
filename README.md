@@ -74,6 +74,8 @@ Si la página muestra los 8 tipos de sangre, frontend y backend están conectado
 4. Ejecuta **Buscar donantes compatibles por distancia**. Con los datos de prueba originales aparecen `O-` y `A+` en ese orden. Los donantes elegibles sin coordenadas quedan al final con `distancia_km: null`.
 5. Edita la solicitud y cancélala al final. Usa **Ver solicitud** para confirmar que el registro conserva el estado `cancelada`.
 
+Al publicar, la API devuelve `notificaciones_creadas` con el número de avisos guardados. Cada donante elegible, incluso si todavía no indicó su ubicación, puede ver su aviso como no leído en `GET /api/notificaciones` con su propia cuenta.
+
 ## Cuentas de prueba
 
 Todas usan la contraseña `password123`.

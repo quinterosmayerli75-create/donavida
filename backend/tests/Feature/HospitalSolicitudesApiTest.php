@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Models\Donante;
+use App\Models\Notificacion;
 use App\Models\Solicitud;
 use App\Models\TipoSangre;
 use App\Models\Usuario;
@@ -11,6 +13,7 @@ use Database\Seeders\TipoSangreSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Date;
 use Laravel\Sanctum\Sanctum;
+use RuntimeException;
 use Tests\TestCase;
 
 class HospitalSolicitudesApiTest extends TestCase
@@ -171,6 +174,66 @@ class HospitalSolicitudesApiTest extends TestCase
         Sanctum::actingAs($central);
 
         $this->getJson(self::SOLICITUDES.'/'.$solicitud->id.'/donantes-compatibles')->assertConflict();
+    }
+
+    public function test_publicar_crea_un_aviso_por_donante_elegible(): void
+    {
+        $ana = $this->usuario('ana');
+        $ana->donante->update(['latitud' => null, 'longitud' => null]);
+        $sofia = $this->usuario('sofia');
+        Sanctum::actingAs($this->usuario('central'));
+
+        $id = $this->postJson(self::SOLICITUDES, $this->datosSolicitud())
+            ->assertCreated()
+            ->assertJsonPath('notificaciones_creadas', 2)
+            ->json('solicitud.id');
+
+        $url = self::SOLICITUDES.'/'.$id;
+        $this->getJson($url.'/donantes-compatibles')->assertOk();
+        $this->patchJson($url, ['unidades_requeridas' => 4])->assertOk();
+
+        $avisos = Notificacion::where('solicitud_id', $id)->get();
+        $this->assertEqualsCanonicalizing([$ana->id, $sofia->id], $avisos->pluck('usuario_id')->all());
+
+        Sanctum::actingAs($ana);
+        $this->getJson('/api/notificaciones/no-leidas')->assertOk()
+            ->assertJsonPath('no_leidas', 1);
+        $this->getJson('/api/notificaciones')->assertOk()
+            ->assertJsonCount(1)
+            ->assertJsonPath('0.solicitud_id', $id)
+            ->assertJsonPath('0.tipo', 'solicitud_urgente')
+            ->assertJsonPath('0.leida', false);
+    }
+
+    public function test_se_puede_publicar_cuando_no_hay_donantes_elegibles(): void
+    {
+        Donante::query()->update(['disponible' => false]);
+        Sanctum::actingAs($this->usuario('central'));
+
+        $this->postJson(self::SOLICITUDES, $this->datosSolicitud())
+            ->assertCreated()
+            ->assertJsonPath('solicitud.estado', Solicitud::ABIERTA)
+            ->assertJsonPath('notificaciones_creadas', 0);
+
+        $this->assertDatabaseCount('notificaciones', 0);
+    }
+
+    public function test_publicar_revierte_la_solicitud_y_los_avisos_si_falla_un_guardado(): void
+    {
+        Sanctum::actingAs($this->usuario('central'));
+        $solicitudesPrevias = Solicitud::count();
+        $intentos = 0;
+
+        Notificacion::creating(function () use (&$intentos) {
+            if (++$intentos === 2) {
+                throw new RuntimeException('Error de prueba al guardar el segundo aviso.');
+            }
+        });
+
+        $this->postJson(self::SOLICITUDES, $this->datosSolicitud())->assertServerError();
+        $this->assertSame(2, $intentos);
+        $this->assertDatabaseCount('solicitudes', $solicitudesPrevias);
+        $this->assertDatabaseCount('notificaciones', 0);
     }
 
     private function usuario(string $cuenta): Usuario
