@@ -1,0 +1,415 @@
+{
+    "info": {
+        "name": "DonaVida API - Módulo 3 (Hospitales y solicitudes)",
+        "description": "Importa esta colección en Thunder Client y sigue la secuencia del README. Guarda el token, el ID de la solicitud y una fecha futura en un entorno local de prueba.",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "variable": [
+        {
+            "key": "base_url",
+            "value": "http://127.0.0.1:8000/api"
+        },
+        {
+            "key": "token_hospital",
+            "value": ""
+        },
+        {
+            "key": "tipo_sangre_id",
+            "value": "4"
+        },
+        {
+            "key": "solicitud_id",
+            "value": ""
+        },
+        {
+            "key": "fecha_limite",
+            "value": ""
+        }
+    ],
+    "item": [
+        {
+            "name": "Preparación",
+            "item": [
+                {
+                    "name": "Comprobar estado",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/estado",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "estado"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Consultar catálogo de tipos de sangre",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/tipos-sangre",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "tipos-sangre"
+                            ]
+                        },
+                        "description": "Busca el ID del tipo A+ y guárdalo en tipo_sangre_id."
+                    }
+                },
+                {
+                    "name": "Iniciar sesión como Hospital Central",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"email\": \"central@donavida.test\",\n    \"password\": \"password123\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/login",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "login"
+                            ]
+                        },
+                        "description": "Copia token de la respuesta en token_hospital."
+                    }
+                },
+                {
+                    "name": "Comprobar que Hospital Norte sigue pendiente",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"email\": \"norte@donavida.test\",\n    \"password\": \"password123\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/login",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "login"
+                            ]
+                        },
+                        "description": "Con los datos originales, el hospital sin verificar recibe 403."
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Perfil",
+            "item": [
+                {
+                    "name": "Ver perfil",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token_hospital}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/hospital/perfil",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "hospital",
+                                "perfil"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Actualizar contacto y ubicación",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token_hospital}}"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"zona\": \"Centro\",\n    \"latitud\": -17.385,\n    \"longitud\": -66.149,\n    \"whatsapp\": \"+591 7000 0001\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/hospital/perfil",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "hospital",
+                                "perfil"
+                            ]
+                        },
+                        "description": "En la respuesta, WhatsApp se guarda como 59170000001."
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Solicitudes y emparejamiento",
+            "item": [
+                {
+                    "name": "Listar solicitudes del hospital",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token_hospital}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/hospital/solicitudes",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "hospital",
+                                "solicitudes"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Publicar una solicitud A+",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token_hospital}}"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"tipo_sangre_id\": {{tipo_sangre_id}},\n    \"unidades_requeridas\": 3,\n    \"prioridad\": \"critica\",\n    \"motivo\": \"Prueba local de emparejamiento\",\n    \"fecha_limite\": \"{{fecha_limite}}\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/hospital/solicitudes",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "hospital",
+                                "solicitudes"
+                            ]
+                        },
+                        "description": "Completa fecha_limite con una fecha futura en formato ISO 8601. La respuesta esperada es 201. Copia solicitud.id en solicitud_id."
+                    }
+                },
+                {
+                    "name": "Ver solicitud",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token_hospital}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/hospital/solicitudes/{{solicitud_id}}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "hospital",
+                                "solicitudes",
+                                "{{solicitud_id}}"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Buscar donantes compatibles por distancia",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token_hospital}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/hospital/solicitudes/{{solicitud_id}}/donantes-compatibles",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "hospital",
+                                "solicitudes",
+                                "{{solicitud_id}}",
+                                "donantes-compatibles"
+                            ]
+                        },
+                        "description": "Con los datos de prueba originales aparecen Ana (O-) y Sofía (A+) ordenadas por distancia. Luis (O+) sigue dentro del intervalo de espera y Diego (AB+) es incompatible con el pedido A+."
+                    }
+                },
+                {
+                    "name": "Editar una solicitud",
+                    "request": {
+                        "method": "PATCH",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token_hospital}}"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"unidades_requeridas\": 4,\n    \"prioridad\": \"alta\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/hospital/solicitudes/{{solicitud_id}}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "hospital",
+                                "solicitudes",
+                                "{{solicitud_id}}"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Cancelar una solicitud",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            },
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token_hospital}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/hospital/solicitudes/{{solicitud_id}}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "hospital",
+                                "solicitudes",
+                                "{{solicitud_id}}"
+                            ]
+                        },
+                        "description": "La respuesta devuelve solicitud.estado como cancelada. Vuelve a ejecutar Ver solicitud para confirmar que el registro sigue en el historial."
+                    }
+                }
+            ]
+        }
+    ]
+}

@@ -42,7 +42,7 @@ Frontend:
 Backend:
 - [x] Perfil del hospital (editar datos, ubicación, WhatsApp)
 - [x] CRUD de solicitudes urgentes (cancelar = cambiar `estado`, no borrar)
-- [ ] **Emparejamiento:** buscar donantes con tipo compatible (`puede_recibir_de`), disponibles, que puedan donar hoy, ordenados por distancia (fórmula de Haversine)
+- [x] **Emparejamiento:** buscar donantes con tipo compatible (`puede_recibir_de`), disponibles, que puedan donar hoy, ordenados por distancia (fórmula de Haversine)
 - [ ] Al publicar una solicitud, crear una notificación para cada donante compatible (usa el modelo de A)
 
 Frontend:

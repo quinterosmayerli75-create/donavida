@@ -74,6 +74,8 @@ Route::middleware('auth:sanctum')->group(function () {
         ->group(function () {
             Route::get('/perfil', [HospitalController::class, 'show']);
             Route::put('/perfil', [HospitalController::class, 'update']);
+            Route::get('/solicitudes/{solicitud}/donantes-compatibles', [SolicitudController::class, 'donantesCompatibles'])
+                ->name('solicitudes.donantes-compatibles');
             Route::apiResource('solicitudes', SolicitudController::class)
                 ->parameters(['solicitudes' => 'solicitud']);
         });

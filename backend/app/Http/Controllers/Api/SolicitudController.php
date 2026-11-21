@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Solicitud;
+use App\Services\EmparejamientoDonantes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -13,6 +14,8 @@ use Illuminate\Validation\ValidationException;
 
 class SolicitudController extends Controller
 {
+    public function __construct(private readonly EmparejamientoDonantes $emparejamiento) {}
+
     public function index(Request $request): JsonResponse
     {
         return response()->json([
@@ -82,6 +85,24 @@ class SolicitudController extends Controller
         });
 
         return response()->json(['solicitud' => $cancelada]);
+    }
+
+    public function donantesCompatibles(Request $request, string $solicitud): JsonResponse
+    {
+        $registro = $this->solicitudesDelHospital($request)->findOrFail($solicitud);
+        $this->verificarAbierta($registro);
+        abort_unless($registro->fecha_limite->isFuture(), 409, 'La fecha límite de la solicitud ya pasó.');
+
+        $hospital = $request->user()->hospital;
+
+        return response()->json([
+            'hospital' => [
+                'id' => $hospital->id,
+                'latitud' => (float) $hospital->latitud,
+                'longitud' => (float) $hospital->longitud,
+            ],
+            'donantes' => $this->emparejamiento->ordenarPorDistancia($registro->tipoSangre, $hospital),
+        ]);
     }
 
     private function solicitudesDelHospital(Request $request): HasMany

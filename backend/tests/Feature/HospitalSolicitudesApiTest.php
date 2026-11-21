@@ -47,6 +47,7 @@ class HospitalSolicitudesApiTest extends TestCase
         $this->getJson($urlOtra)->assertNotFound();
         $this->patchJson($urlOtra, ['unidades_requeridas' => 2])->assertNotFound();
         $this->deleteJson($urlOtra)->assertNotFound();
+        $this->getJson($urlOtra.'/donantes-compatibles')->assertNotFound();
     }
 
     public function test_valida_publica_edita_y_cancela_sin_borrar_la_solicitud(): void
@@ -91,6 +92,7 @@ class HospitalSolicitudesApiTest extends TestCase
         $this->deleteJson($url)->assertOk()->assertJsonPath('solicitud.estado', Solicitud::CANCELADA);
         $this->patchJson($url, ['unidades_requeridas' => 7])->assertConflict();
         $this->getJson($url)->assertOk()->assertJsonPath('solicitud.estado', Solicitud::CANCELADA);
+        $this->getJson($url.'/donantes-compatibles')->assertConflict();
         $this->assertDatabaseHas('solicitudes', ['id' => $id, 'estado' => Solicitud::CANCELADA]);
     }
 
@@ -115,6 +117,60 @@ class HospitalSolicitudesApiTest extends TestCase
         $this->patchJson($url, ['unidades_requeridas' => 2])
             ->assertOk()->assertJsonPath('solicitud.estado', Solicitud::CUBIERTA);
         $this->deleteJson($url)->assertConflict();
+    }
+
+    public function test_filtra_y_ordena_donantes_compatibles_por_distancia(): void
+    {
+        $central = $this->usuario('central');
+        $central->hospital->update(['latitud' => 0, 'longitud' => 0]);
+        $ana = $this->usuario('ana');
+        $ana->donante->update(['latitud' => 2, 'longitud' => 0]);
+        $sofia = $this->usuario('sofia');
+        $sofia->donante->update(['latitud' => 0, 'longitud' => 1]);
+
+        $usuarioSinUbicacion = $ana->replicate()->fill(['email' => 'sin-ubicacion@donavida.test']);
+        $usuarioSinUbicacion->save();
+        $sinUbicacion = $ana->donante->replicate()->fill([
+            'usuario_id' => $usuarioSinUbicacion->id,
+            'ci' => '9000005',
+            'latitud' => null,
+            'longitud' => null,
+        ]);
+        $sinUbicacion->save();
+
+        $solicitud = $central->hospital->solicitudes()->create($this->datosSolicitud());
+        Sanctum::actingAs($central);
+        $url = self::SOLICITUDES.'/'.$solicitud->id.'/donantes-compatibles';
+
+        $this->getJson($url)->assertOk()
+            ->assertJsonCount(3, 'donantes')
+            ->assertJsonPath('hospital.id', $central->hospital->id)
+            ->assertJsonPath('donantes.0.id', $sofia->donante->id)
+            ->assertJsonPath('donantes.0.tipo_sangre', 'A+')
+            ->assertJsonPath('donantes.0.distancia_km', 111.195)
+            ->assertJsonPath('donantes.1.id', $ana->donante->id)
+            ->assertJsonPath('donantes.1.distancia_km', 222.39)
+            ->assertJsonPath('donantes.2.id', $sinUbicacion->id)
+            ->assertJsonPath('donantes.2.distancia_km', null)
+            ->assertJsonMissingPath('donantes.0.usuario')
+            ->assertJsonMissingPath('donantes.0.ci');
+
+        $ana->update(['estado' => 'inactivo']);
+        $sofia->donante->update(['disponible' => false]);
+        $this->getJson($url)->assertOk()
+            ->assertJsonCount(1, 'donantes')
+            ->assertJsonPath('donantes.0.id', $sinUbicacion->id);
+    }
+
+    public function test_el_emparejamiento_rechaza_solicitudes_vencidas(): void
+    {
+        $central = $this->usuario('central');
+        $solicitud = $central->hospital->solicitudes()->create(array_replace($this->datosSolicitud(), [
+            'fecha_limite' => Date::now()->subDay(),
+        ]));
+        Sanctum::actingAs($central);
+
+        $this->getJson(self::SOLICITUDES.'/'.$solicitud->id.'/donantes-compatibles')->assertConflict();
     }
 
     private function usuario(string $cuenta): Usuario
