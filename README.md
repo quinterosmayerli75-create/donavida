@@ -76,6 +76,12 @@ Si la página muestra los 8 tipos de sangre, frontend y backend están conectado
 
 Al publicar, la API devuelve `notificaciones_creadas` con el número de avisos guardados. Cada donante elegible, incluso si todavía no indicó su ubicación, puede ver su aviso como no leído en `GET /api/notificaciones` con su propia cuenta.
 
+## Probar el módulo de citas y donaciones en Postman
+
+El backend de Mollo incluye citas, asistencia, donaciones, campañas con cupos e indicadores. Consulta [las rutas y el flujo del módulo 4](docs/MODULO4.md) e importa [su colección de Postman](docs/postman/DonaVida-Modulo4-Citas-Donaciones.postman_collection.json). Para procesar los correos de confirmación, ejecuta `php artisan queue:work --tries=3` desde `backend` en otra terminal.
+
+Las pruebas automáticas se ejecutan desde `backend` con `php artisan test`; usan SQLite en memoria. Las fechas de la API son UTC y el frontend debe mostrarlas en hora de Bolivia (`America/La_Paz`, UTC−04:00).
+
 ## Cuentas de prueba
 
 Todas usan la contraseña `password123`.

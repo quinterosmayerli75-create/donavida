@@ -2,9 +2,14 @@
 
 use App\Http\Controllers\Api\AdministradorHospitalController;
 use App\Http\Controllers\Api\AutenticacionController;
+use App\Http\Controllers\Api\CampanaController;
+use App\Http\Controllers\Api\CitaController;
+use App\Http\Controllers\Api\DonacionController;
 use App\Http\Controllers\Api\DonanteController;
 use App\Http\Controllers\Api\HospitalController;
+use App\Http\Controllers\Api\IndicadorController;
 use App\Http\Controllers\Api\NotificacionController;
+use App\Http\Controllers\Api\OportunidadDonacionController;
 use App\Http\Controllers\Api\SolicitudController;
 use App\Http\Middleware\VerificarHospitalActivo;
 use App\Models\Rol;
@@ -52,14 +57,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::patch('/notificaciones/leer-todas', [NotificacionController::class, 'marcarTodasLeidas']);
     Route::patch('/notificaciones/{notificacion}/leer', [NotificacionController::class, 'marcarLeida']);
 
-    Route::middleware('rol:' . Rol::ADMINISTRADOR)->prefix('admin')->group(function () {
+    Route::middleware('rol:'.Rol::ADMINISTRADOR)->prefix('admin')->group(function () {
         Route::get('/hospitales', [AdministradorHospitalController::class, 'listar']);
         Route::patch('/hospitales/{hospital}/validar', [AdministradorHospitalController::class, 'validar']);
         Route::patch('/hospitales/{hospital}/desactivar', [AdministradorHospitalController::class, 'desactivar']);
     });
 
     // ---------- Módulo 2: Donantes (Maya) ----------
-    Route::middleware('rol:' . Rol::DONANTE)->prefix('donante')->group(function () {
+    Route::middleware('rol:'.Rol::DONANTE)->prefix('donante')->group(function () {
         Route::get('/perfil', [DonanteController::class, 'verPerfil']);
         Route::put('/perfil', [DonanteController::class, 'actualizarPerfil']);
         Route::get('/puedo-donar', [DonanteController::class, 'puedoDonar']);
@@ -67,7 +72,7 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     // ---------- Módulo 3: Hospitales y solicitudes (Mati) ----------
-    Route::middleware(['rol:' . Rol::HOSPITAL, VerificarHospitalActivo::class])
+    Route::middleware(['rol:'.Rol::HOSPITAL, VerificarHospitalActivo::class])
         ->prefix('hospital')
         ->name('hospital.')
         ->where(['solicitud' => '[0-9]+'])
@@ -81,4 +86,25 @@ Route::middleware('auth:sanctum')->group(function () {
         });
 
     // ---------- Módulo 4: Citas, donaciones y campañas (Mollo) ----------
+    Route::middleware('rol:'.Rol::DONANTE)->prefix('donante')->group(function () {
+        Route::get('/solicitudes', [OportunidadDonacionController::class, 'solicitudes']);
+        Route::get('/campanas', [OportunidadDonacionController::class, 'campanas']);
+        Route::get('/citas', [CitaController::class, 'misCitas']);
+        Route::post('/citas', [CitaController::class, 'store']);
+        Route::patch('/citas/{cita}/cancelar', [CitaController::class, 'cancelarDonante'])->whereNumber('cita');
+    });
+
+    Route::middleware(['rol:'.Rol::HOSPITAL, VerificarHospitalActivo::class])
+        ->prefix('hospital')->group(function () {
+            Route::get('/citas', [CitaController::class, 'agenda']);
+            Route::patch('/citas/{cita}/asistencia', [CitaController::class, 'asistencia'])->whereNumber('cita');
+            Route::patch('/citas/{cita}/cancelar', [CitaController::class, 'cancelarHospital'])->whereNumber('cita');
+            Route::post('/citas/{cita}/donacion', [DonacionController::class, 'store'])->whereNumber('cita');
+            Route::get('/donaciones', [DonacionController::class, 'index']);
+            Route::apiResource('campanas', CampanaController::class)->parameters(['campanas' => 'campana'])->whereNumber('campana');
+            Route::get('/indicadores', [IndicadorController::class, 'hospital']);
+        });
+
+    Route::get('/admin/indicadores', [IndicadorController::class, 'administrador'])
+        ->middleware('rol:'.Rol::ADMINISTRADOR);
 });
