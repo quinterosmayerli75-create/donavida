@@ -54,12 +54,14 @@ Frontend:
 **Tablas:** `citas`, `donaciones`, `campanas`
 
 Backend:
-- [ ] Donante acepta una solicitud o campaña y elige horario: crea la cita **solo si** `puedeDonarHoy()` es verdadero
-- [ ] Hospital confirma asistencia (`asistio` / `no_asistio`)
-- [ ] Registrar donación: crea la donación, actualiza `fecha_ultima_donacion` del donante y `unidades_confirmadas` de la solicitud
-- [ ] CRUD de campañas con control de cupos
-- [ ] Indicadores para el panel (donaciones por tipo de sangre, solicitudes por estado)
-- [ ] Correo de confirmación de cita (Mailtrap)
+- [x] Donante acepta una solicitud o campaña y elige horario: crea la cita **solo si** `puedeDonarHoy()` es verdadero
+- [x] Hospital confirma asistencia (`asistio` / `no_asistio`)
+- [x] Registrar donación: crea la donación, actualiza `fecha_ultima_donacion` del donante y `unidades_confirmadas` de la solicitud
+- [x] CRUD de campañas con control de cupos
+- [x] Indicadores para el panel (donaciones por tipo de sangre, solicitudes por estado)
+- [x] Correo de confirmación de cita en cola (configuración Mailtrap documentada; entrega SMTP pendiente de credenciales)
+
+API, colección Postman y pruebas: [guía del módulo 4](docs/MODULO4.md). No requiere nuevas migraciones.
 
 Frontend:
 - [ ] Donante: ver solicitudes/campañas, aceptar y elegir horario, ver mis citas
