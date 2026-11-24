@@ -2,11 +2,9 @@
 
 Los 4 integrantes trabajan en **backend y frontend**. Cada uno es dueño de un módulo completo: hace su API en Laravel y luego las pantallas en React que la consumen.
 
-> Reemplacen "Integrante A, B, C, D" por sus nombres.
-
 ## Integrantes y módulos
 
-### 👤 Integrante A — Autenticación, usuarios y notificaciones
+### 👤 Mayerli — Autenticación, usuarios y notificaciones
 **Tablas:** `usuarios`, `roles`, `notificaciones`
 
 Backend:
@@ -24,44 +22,46 @@ Frontend:
 - [ ] Layout general con menú según el rol
 - [ ] Campanita de notificaciones con Laravel Echo
 
-### 👤 Integrante B — Donantes
+### 👤 Maya — Donantes
 **Tablas:** `donantes`, `tipos_sangre`
 
 Backend:
-- [ ] Ver y editar el perfil del donante (tipo de sangre, ubicación, disponibilidad)
-- [ ] Validar edad de 18 a 60 años al registrar
-- [ ] Historial de donaciones del donante
-- [ ] Endpoint "¿puedo donar?" usando `Donante::puedeDonarHoy()` (regla de los 3 meses)
-- [ ] Pruebas automáticas de la regla de los 3 meses
+- [x] Ver y editar el perfil del donante (tipo de sangre, ubicación, disponibilidad)
+- [x] Validar edad de 18 a 60 años al registrar
+- [x] Historial de donaciones del donante
+- [x] Endpoint "¿puedo donar?" usando `Donante::puedeDonarHoy()` (regla de los 3 meses)
+- [x] Pruebas automáticas de la regla de los 3 meses
 
 Frontend:
-- [ ] Portal del donante: perfil, mapa (Leaflet) para marcar su ubicación
-- [ ] Historial de donaciones e insignias ("Héroe nivel X")
+- [x] Portal del donante: perfil, mapa (Leaflet) para marcar su ubicación
+- [x] Historial de donaciones e insignias ("Héroe nivel X")
 
-### 👤 Integrante C — Hospitales, solicitudes y emparejamiento
+### 👤 Mati — Hospitales, solicitudes y emparejamiento
 **Tablas:** `hospitales`, `solicitudes`
 
 Backend:
-- [ ] Perfil del hospital (editar datos, ubicación, WhatsApp)
-- [ ] CRUD de solicitudes urgentes (cancelar = cambiar `estado`, no borrar)
-- [ ] **Emparejamiento:** buscar donantes con tipo compatible (`puede_recibir_de`), disponibles, que puedan donar hoy, ordenados por distancia (fórmula de Haversine)
-- [ ] Al publicar una solicitud, crear una notificación para cada donante compatible (usa el modelo de A)
+- [x] Perfil del hospital (editar datos, ubicación, WhatsApp)
+- [x] CRUD de solicitudes urgentes (cancelar = cambiar `estado`, no borrar)
+- [x] **Emparejamiento:** buscar donantes con tipo compatible (`puede_recibir_de`), disponibles, que puedan donar hoy, ordenados por distancia (fórmula de Haversine)
+- [x] Al publicar una solicitud, crear una notificación para cada donante compatible (usa el modelo de A)
 
 Frontend:
 - [ ] Panel del hospital: listado y formulario de solicitudes
 - [ ] Mapa con el hospital y los donantes compatibles cercanos
 - [ ] Botón "Abrir WhatsApp" del hospital (link `wa.me`)
 
-### 👤 Integrante D — Citas, donaciones, campañas y reportes
+### 👤 Mollo — Citas, donaciones, campañas y reportes
 **Tablas:** `citas`, `donaciones`, `campanas`
 
 Backend:
-- [ ] Donante acepta una solicitud o campaña y elige horario: crea la cita **solo si** `puedeDonarHoy()` es verdadero
-- [ ] Hospital confirma asistencia (`asistio` / `no_asistio`)
-- [ ] Registrar donación: crea la donación, actualiza `fecha_ultima_donacion` del donante y `unidades_confirmadas` de la solicitud
-- [ ] CRUD de campañas con control de cupos
-- [ ] Indicadores para el panel (donaciones por tipo de sangre, solicitudes por estado)
-- [ ] Correo de confirmación de cita (Mailtrap)
+- [x] Donante acepta una solicitud o campaña y elige horario: crea la cita **solo si** `puedeDonarHoy()` es verdadero
+- [x] Hospital confirma asistencia (`asistio` / `no_asistio`)
+- [x] Registrar donación: crea la donación, actualiza `fecha_ultima_donacion` del donante y `unidades_confirmadas` de la solicitud
+- [x] CRUD de campañas con control de cupos
+- [x] Indicadores para el panel (donaciones por tipo de sangre, solicitudes por estado)
+- [x] Correo de confirmación de cita en cola (configuración Mailtrap documentada; entrega SMTP pendiente de credenciales)
+
+API, colección Postman y pruebas: [guía del módulo 4](docs/MODULO4.md). No requiere nuevas migraciones.
 
 Frontend:
 - [ ] Donante: ver solicitudes/campañas, aceptar y elegir horario, ver mis citas

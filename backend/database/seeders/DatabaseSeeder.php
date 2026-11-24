@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
             RolSeeder::class,         // datos fijos del sistema
             TipoSangreSeeder::class,  // datos fijos del sistema
             DatosPruebaSeeder::class, // solo para desarrollo
+            HistorialDonacionesSeeder::class, // solo para desarrollo (módulo donantes)
         ]);
     }
 }

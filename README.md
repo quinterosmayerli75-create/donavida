@@ -66,6 +66,22 @@ npm run dev                   # http://localhost:5173
 
 Si la página muestra los 8 tipos de sangre, frontend y backend están conectados ✅
 
+## Probar el módulo de hospitales en Thunder Client
+
+1. Con la API iniciada y los seeders cargados, importa la [colección del módulo 3](docs/postman/DonaVida-Modulo3-Hospitales.postman_collection.json) desde **Collections → Import**. Si las variables no aparecen, agrégalas a un entorno activo. Usa `base_url=http://127.0.0.1:8000/api`.
+2. Ejecuta **Consultar catálogo de tipos de sangre** y guarda el ID de `A+` en `tipo_sangre_id`. Inicia sesión como Hospital Central y copia el campo `token` en `token_hospital`.
+3. Ejecuta **Ver perfil** y **Listar solicitudes del hospital**. Completa `fecha_limite` con una fecha futura en formato ISO 8601 con `-04:00` para Bolivia. Publica la solicitud y guarda `solicitud.id` en `solicitud_id`.
+4. Ejecuta **Buscar donantes compatibles por distancia**. Con los datos de prueba originales aparecen `O-` y `A+` en ese orden. Los donantes elegibles sin coordenadas quedan al final con `distancia_km: null`.
+5. Edita la solicitud y cancélala al final. Usa **Ver solicitud** para confirmar que el registro conserva el estado `cancelada`.
+
+Al publicar, la API devuelve `notificaciones_creadas` con el número de avisos guardados. Cada donante elegible, incluso si todavía no indicó su ubicación, puede ver su aviso como no leído en `GET /api/notificaciones` con su propia cuenta.
+
+## Probar el módulo de citas y donaciones en Postman
+
+El backend de Mollo incluye citas, asistencia, donaciones, campañas con cupos e indicadores. Consulta [las rutas y el flujo del módulo 4](docs/MODULO4.md) e importa [su colección de Postman](docs/postman/DonaVida-Modulo4-Citas-Donaciones.postman_collection.json). Para procesar los correos de confirmación, ejecuta `php artisan queue:work --tries=3` desde `backend` en otra terminal.
+
+Las pruebas automáticas se ejecutan desde `backend` con `php artisan test`; usan SQLite en memoria. Las fechas de la API son UTC y el frontend debe mostrarlas en hora de Bolivia (`America/La_Paz`, UTC−04:00).
+
 ## Cuentas de prueba
 
 Todas usan la contraseña `password123`.
