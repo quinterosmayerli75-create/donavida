@@ -86,21 +86,23 @@ function PaginaSolicitudes() {
 4. Las piezas grandes de la maqueta (tabla de citas, tarjetas de campañas, historial, carnet, radar, selector de grupos) están en `src/compartido/maqueta.tsx` y reciben los datos por props.
 5. Fechas en hora de Bolivia con `fechaCorta()`, `hora()`, `fechaHora()` y `diaBolivia()`.
 
-| Rol | Pantalla | Archivo | Datos |
-|---|---|---|---|
-| Administrador | Resumen, Hospitales, Usuarios, Campañas, Reportes | `modulos/administrador/` | **Reales** (Mayerli) |
-| Hospital | Resumen | `modulos/hospitales/PaginaResumenHospital.tsx` | Ejemplo |
-| Hospital | Solicitudes | `modulos/hospitales/PaginaSolicitudes.tsx` | Ejemplo |
-| Hospital | Donantes | `modulos/hospitales/PaginaDonantes.tsx` | Ejemplo |
-| Hospital | Citas y donaciones | `modulos/hospitales/PaginaCitas.tsx` | Ejemplo |
-| Hospital | Campañas | `modulos/hospitales/PaginaCampanasHospital.tsx` | Ejemplo |
-| Hospital | Reportes | `modulos/hospitales/PaginaReportesHospital.tsx` | Ejemplo |
-| Donante | Inicio | `modulos/donantes/PaginaInicio.tsx` | Ejemplo |
-| Donante | Solicitudes | `modulos/donantes/PaginaSolicitudesDonante.tsx` | Ejemplo |
-| Donante | Mis citas | `modulos/donantes/PaginaMisCitas.tsx` | Ejemplo |
-| Donante | Campañas | `modulos/donantes/PaginaCampanasDonante.tsx` | Ejemplo |
-| Donante | Historial | `modulos/donantes/PaginaHistorial.tsx` | Ejemplo (Maya: su lógica está en `componentes/HistorialDonaciones.tsx`) |
-| Donante | Mi perfil | `modulos/donantes/PaginaPerfil.tsx` | Ejemplo (Maya: su lógica está en `componentes/FormularioPerfil.tsx`, `MapaUbicacion.tsx`, `TarjetaPuedoDonar.tsx`) |
+**Reparto del equipo:** Mayerli revisa y aprueba todos los PRs (y el administrador ya está terminado). Maya conecta el rol Donante. Mati y Mollo se dividen el rol Hospital según las rutas del backend que hizo cada uno. Mollo también ayuda a Maya con citas y campañas, porque esas rutas son suyas.
+
+| Rol | Pantalla | Archivo | Datos | Responsable |
+|---|---|---|---|---|
+| Administrador | Resumen, Hospitales, Usuarios, Campañas, Reportes | `modulos/administrador/` | **Reales** (Mayerli) | **Mayerli** (terminado) |
+| Hospital | Resumen | `modulos/hospitales/PaginaResumenHospital.tsx` | Ejemplo | Mati |
+| Hospital | Solicitudes | `modulos/hospitales/PaginaSolicitudes.tsx` | Ejemplo | Mati |
+| Hospital | Donantes | `modulos/hospitales/PaginaDonantes.tsx` | Ejemplo | Mati |
+| Hospital | Citas y donaciones | `modulos/hospitales/PaginaCitas.tsx` | Ejemplo | Mollo |
+| Hospital | Campañas | `modulos/hospitales/PaginaCampanasHospital.tsx` | Ejemplo | Mollo |
+| Hospital | Reportes | `modulos/hospitales/PaginaReportesHospital.tsx` | Ejemplo | Mollo |
+| Donante | Inicio | `modulos/donantes/PaginaInicio.tsx` | Ejemplo | Maya |
+| Donante | Solicitudes | `modulos/donantes/PaginaSolicitudesDonante.tsx` | Ejemplo | Maya |
+| Donante | Mis citas | `modulos/donantes/PaginaMisCitas.tsx` | Ejemplo | Maya |
+| Donante | Campañas | `modulos/donantes/PaginaCampanasDonante.tsx` | Ejemplo | Maya |
+| Donante | Historial | `modulos/donantes/PaginaHistorial.tsx` | Ejemplo (Maya: su lógica está en `componentes/HistorialDonaciones.tsx`) | Maya |
+| Donante | Mi perfil | `modulos/donantes/PaginaPerfil.tsx` | Ejemplo (Maya: su lógica está en `componentes/FormularioPerfil.tsx`, `MapaUbicacion.tsx`, `TarjetaPuedoDonar.tsx`) | Maya |
 
 Los numeritos rojos del menú y el botón rojo de arriba están en `src/compartido/menus.ts` (`insignia` y `accion`); también son de ejemplo.
 
