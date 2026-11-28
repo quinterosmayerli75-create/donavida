@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\AdministradorController;
 use App\Http\Controllers\Api\AdministradorHospitalController;
 use App\Http\Controllers\Api\AutenticacionController;
 use App\Http\Controllers\Api\CampanaController;
@@ -61,6 +62,14 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/hospitales', [AdministradorHospitalController::class, 'listar']);
         Route::patch('/hospitales/{hospital}/validar', [AdministradorHospitalController::class, 'validar']);
         Route::patch('/hospitales/{hospital}/desactivar', [AdministradorHospitalController::class, 'desactivar']);
+        Route::get('/usuarios', [AdministradorController::class, 'usuarios']);
+        Route::patch('/usuarios/{usuario}/estado', [AdministradorController::class, 'cambiarEstado']);
+        Route::get('/campanas', [AdministradorController::class, 'campanas']);
+        Route::post('/hospitales', [AdministradorController::class, 'crearHospital']);
+        Route::put('/hospitales/{hospital}', [AdministradorController::class, 'actualizarHospital']);
+        Route::post('/donantes', [AdministradorController::class, 'crearDonante']);
+        Route::get('/donantes/{donante}', [AdministradorController::class, 'verDonante']);
+        Route::put('/donantes/{donante}', [AdministradorController::class, 'actualizarDonante']);
     });
 
     // ---------- Módulo 2: Donantes (Maya) ----------

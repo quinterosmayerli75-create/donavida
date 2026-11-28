@@ -1,1 +1,24 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
+
+/* Paleta de DonaVida: rojo como color principal y un verde suave solo para estados positivos */
+@theme {
+  --font-sans: 'Plus Jakarta Sans', system-ui, sans-serif;
+  --color-marca: #e11d48;
+  --color-marca-oscuro: #b3122e;
+  --color-marca-suave: #fdeef1;
+  --color-exito: #16a34a;
+  --color-exito-suave: #eefbf3;
+  --color-aviso: #b45309;
+  --color-aviso-suave: #fef6e7;
+  --color-info: #2563eb;
+  --color-info-suave: #eef4ff;
+  --color-fondo: #f6f7f9;
+  --color-borde: #edeef1;
+  --color-texto: #1e2230;
+  --color-texto-suave: #6b7280;
+}
+
+body {
+  @apply bg-fondo text-texto font-sans text-sm antialiased;
+}

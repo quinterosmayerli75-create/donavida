@@ -64,6 +64,8 @@ CREATE TABLE donantes (
     latitud                DECIMAL(10,7) NULL,
     longitud               DECIMAL(10,7) NULL,
     disponible             TINYINT(1) NOT NULL DEFAULT 1,
+    foto_ruta              VARCHAR(255) NULL,
+    carnet_ruta            VARCHAR(255) NULL,
     fecha_ultima_donacion  DATE NULL,
     created_at             TIMESTAMP NULL,
     updated_at             TIMESTAMP NULL,
