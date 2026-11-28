@@ -49,7 +49,8 @@ php artisan key:generate
 Revisar en `.env` el usuario y contraseña de MySQL (`DB_USERNAME`, `DB_PASSWORD`). Después:
 
 ```bash
-php artisan migrate:fresh --seed   # crea las 10 tablas y carga los datos de prueba
+php artisan migrate:fresh --seed   # crea las tablas y carga los datos de prueba
+php artisan storage:link           # una sola vez: permite ver las fotos que suben los donantes
 php artisan serve                  # API en http://localhost:8000
 ```
 

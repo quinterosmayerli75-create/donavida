@@ -7,7 +7,7 @@ use App\Models\Donante;
 use App\Models\Hospital;
 use App\Models\Rol;
 use App\Models\Usuario;
-use Carbon\Carbon;
+use App\Support\Reglas;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -29,41 +29,21 @@ class AutenticacionController extends Controller
      */
     public function registrarDonante(Request $request): JsonResponse
     {
-        // Edad permitida para donar: 18 a 60 años (Ley 1687, art. 19)
-        $fechaMaximaNacimiento = Carbon::today()->subYears(Donante::EDAD_MINIMA)->toDateString();
-        $fechaMinimaNacimiento = Carbon::today()->subYears(Donante::EDAD_MAXIMA + 1)->addDay()->toDateString();
-
         $datos = $request->validate([
-            'nombre' => ['required', 'string', 'max:100'],
-            'apellidos' => ['required', 'string', 'max:100'],
-            'email' => ['required', 'email', 'max:150', 'unique:usuarios,email'],
-            'telefono' => ['required', 'string', 'max:20'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
-            'ci' => ['required', 'string', 'max:20', 'unique:donantes,ci'],
-            'fecha_nacimiento' => [
-                'required',
-                'date',
-                'before_or_equal:' . $fechaMaximaNacimiento,
-                'after_or_equal:' . $fechaMinimaNacimiento,
-            ],
-            'sexo' => ['required', 'in:F,M'],
-            'tipo_sangre_id' => ['required', 'integer', 'exists:tipos_sangre,id'],
-            'peso_kg' => ['nullable', 'numeric', 'min:30', 'max:250'],
-            'direccion' => ['nullable', 'string', 'max:200'],
-            'zona' => ['nullable', 'string', 'max:100'],
-            'latitud' => ['nullable', 'numeric', 'between:-90,90'],
-            'longitud' => ['nullable', 'numeric', 'between:-180,180'],
-        ], [
-            'fecha_nacimiento.before_or_equal' => 'Debes tener al menos 18 años para registrarte como donante.',
-            'fecha_nacimiento.after_or_equal' => 'Solo pueden donar personas de hasta 60 años.',
-            'email.unique' => 'Ese correo ya está registrado.',
-            'ci.unique' => 'Ese carnet ya está registrado.',
-        ]);
+            ...Reglas::donante(),
+            'password' => Reglas::password(),
+            'foto' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'carnet_donante' => ['nullable', 'file', 'mimes:jpg,jpeg,png,webp,pdf', 'max:4096'],
+        ], Reglas::mensajes());
+
+        // Archivos: la foto se puede mostrar (disco public); el carnet es privado (disco local)
+        $fotoRuta = $request->file('foto')?->store('fotos', 'public');
+        $carnetRuta = $request->file('carnet_donante')?->store('carnets', 'local');
 
         $rolDonante = Rol::where('nombre', Rol::DONANTE)->firstOrFail();
 
         // Transacción: si falla la creación del donante, tampoco se guarda el usuario.
-        $usuario = DB::transaction(function () use ($datos, $rolDonante) {
+        $usuario = DB::transaction(function () use ($datos, $rolDonante, $fotoRuta, $carnetRuta) {
             $usuarioNuevo = Usuario::create([
                 'rol_id' => $rolDonante->id,
                 'nombre' => $datos['nombre'],
@@ -86,6 +66,9 @@ class AutenticacionController extends Controller
                 'latitud' => $datos['latitud'] ?? null,
                 'longitud' => $datos['longitud'] ?? null,
                 'disponible' => true,
+                'fecha_ultima_donacion' => $datos['fecha_ultima_donacion'] ?? null,
+                'foto_ruta' => $fotoRuta,
+                'carnet_ruta' => $carnetRuta,
             ]);
 
             return $usuarioNuevo;
@@ -108,22 +91,9 @@ class AutenticacionController extends Controller
     public function registrarHospital(Request $request): JsonResponse
     {
         $datos = $request->validate([
-            'nombre' => ['required', 'string', 'max:100'],
-            'email' => ['required', 'email', 'max:150', 'unique:usuarios,email'],
-            'telefono' => ['required', 'string', 'max:20'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
-            'razon_social' => ['required', 'string', 'max:150'],
-            'nit' => ['required', 'string', 'max:20', 'unique:hospitales,nit'],
-            'direccion' => ['required', 'string', 'max:200'],
-            'zona' => ['nullable', 'string', 'max:100'],
-            'latitud' => ['required', 'numeric', 'between:-90,90'],
-            'longitud' => ['required', 'numeric', 'between:-180,180'],
-            'telefono_contacto' => ['required', 'string', 'max:20'],
-            'whatsapp' => ['nullable', 'string', 'max:20'],
-        ], [
-            'email.unique' => 'Ese correo ya está registrado.',
-            'nit.unique' => 'Ese NIT ya está registrado.',
-        ]);
+            ...Reglas::hospital(),
+            'password' => Reglas::password(),
+        ], Reglas::mensajes());
 
         $rolHospital = Rol::where('nombre', Rol::HOSPITAL)->firstOrFail();
 

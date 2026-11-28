@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Storage;
 
 class Donante extends Model
 {
@@ -30,7 +31,24 @@ class Donante extends Model
         'longitud',
         'disponible',
         'fecha_ultima_donacion',
+        'foto_ruta',
+        'carnet_ruta',
     ];
+
+    // Las rutas internas de los archivos no se envían; en su lugar va la URL de la foto
+    protected $hidden = ['foto_ruta', 'carnet_ruta'];
+
+    protected $appends = ['foto_url', 'tiene_carnet'];
+
+    public function getFotoUrlAttribute(): ?string
+    {
+        return $this->foto_ruta ? Storage::disk('public')->url($this->foto_ruta) : null;
+    }
+
+    public function getTieneCarnetAttribute(): bool
+    {
+        return $this->carnet_ruta !== null;
+    }
 
     protected function casts(): array
     {
